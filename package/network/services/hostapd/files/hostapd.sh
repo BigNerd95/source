@@ -405,7 +405,7 @@ hostapd_set_bss_options() {
 				json_get_values r1kh r1kh
 
 				set_default r0_key_lifetime 10000
-				set_default r1_key_holder "00004f577274"
+				set_default r1_key_holder "${macaddr//\:}"
 				set_default pmk_r1_push 0
 
 				append bss_conf "r0_key_lifetime=$r0_key_lifetime" "$N"
