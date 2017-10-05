@@ -397,7 +397,7 @@ hostapd_set_bss_options() {
 			append bss_conf "ft_psk_generate_local=$ft_psk_generate_local" "$N"
 			append bss_conf "ft_over_ds=$ft_over_ds" "$N"
 			append bss_conf "reassociation_deadline=$reassociation_deadline" "$N"
-			[ -n "$nasid" ] || append bss_conf "nas_identifier=$(uci get system.@system[0].hostname)" "$N"
+			[ -n "$nasid" ] || append bss_conf "nas_identifier=${macaddr//\:}" "$N"
 
 			if [ "$ft_psk_generate_local" -eq "0" ]; then
 				json_get_vars r0_key_lifetime r1_key_holder pmk_r1_push
