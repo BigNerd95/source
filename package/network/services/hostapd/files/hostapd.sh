@@ -189,6 +189,8 @@ hostapd_common_add_bss_config() {
 	config_add_int time_advertisement
 	config_add_string time_zone
 
+	config_add_boolean rrm_neighbor_report rrm_beacon_report
+
 	config_add_boolean ieee80211r pmk_r1_push ft_psk_generate_local ft_over_ds
 	config_add_int r0_key_lifetime reassociation_deadline
 	config_add_string mobility_domain r1_key_holder
@@ -225,7 +227,8 @@ hostapd_set_bss_options() {
 		wps_independent wps_device_type wps_device_name wps_manufacturer wps_pin \
 		macfilter ssid wmm uapsd hidden short_preamble rsn_preauth \
 		iapp_interface eapol_version dynamic_vlan ieee80211w nasid \
-		acct_server acct_secret acct_port acct_interval
+		acct_server acct_secret acct_port acct_interval \
+		rrm_neighbor_report rrm_beacon_report
 
 	set_default isolate 0
 	set_default maxassoc 0
@@ -409,6 +412,11 @@ hostapd_set_bss_options() {
 		append bss_conf "proxy_arp=$proxy_arp" "$N"
 		append bss_conf "na_mcast_to_ucast=$na_mcast_to_ucast" "$N"
 	fi
+
+	set_default rrm_neighbor_report 0
+	set_default rrm_beacon_report 0
+	append bss_conf "rrm_neighbor_report=$rrm_neighbor_report" "$N"
+	append bss_conf "rrm_beacon_report=$rrm_beacon_report" "$N"
 
 	if [ "$wpa" -ge "1" ]; then
 		json_get_vars ieee80211r
