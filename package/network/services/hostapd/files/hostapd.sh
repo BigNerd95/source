@@ -185,6 +185,10 @@ hostapd_common_add_bss_config() {
 	config_add_int wps_ap_setup_locked wps_independent
 	config_add_string wps_device_type wps_device_name wps_manufacturer wps_pin
 
+	config_add_boolean ieee80211v wnm_sleep_mode bss_transition proxy_arp na_mcast_to_ucast
+	config_add_int time_advertisement
+	config_add_string time_zone
+
 	config_add_boolean ieee80211r pmk_r1_push ft_psk_generate_local ft_over_ds
 	config_add_int r0_key_lifetime reassociation_deadline
 	config_add_string mobility_domain r1_key_holder
@@ -384,6 +388,27 @@ hostapd_set_bss_options() {
 		network_get_device ifname "$iapp_interface" || ifname="$iapp_interface"
 		append bss_conf "iapp_interface=$ifname" "$N"
 	}
+
+	json_get_vars ieee80211v
+	set_default ieee80211v 0
+	if [ "$ieee80211v" -eq "1" ]; then
+		json_get_vars time_advertisement time_zone wnm_sleep_mode bss_transition \
+			proxy_arp na_mcast_to_ucast
+
+		set_default time_advertisement 0
+		set_default wnm_sleep_mode 0
+		set_default bss_transition 0
+		set_default proxy_arp 0
+		set_default na_mcast_to_ucast 0
+
+		append bss_conf "time_advertisement=$time_advertisement" "$N"
+		[ -n "$time_zone" ] && append bss_conf "time_zone=$time_zone" "$N"
+
+		append bss_conf "wnm_sleep_mode=$wnm_sleep_mode" "$N"
+		append bss_conf "bss_transition=$bss_transition" "$N"
+		append bss_conf "proxy_arp=$proxy_arp" "$N"
+		append bss_conf "na_mcast_to_ucast=$na_mcast_to_ucast" "$N"
+	fi
 
 	if [ "$wpa" -ge "1" ]; then
 		json_get_vars ieee80211r
