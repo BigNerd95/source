@@ -187,6 +187,10 @@ hostapd_common_add_bss_config() {
 
 	config_add_boolean rrm_neighbor_report rrm_beacon_report
 
+	config_add_boolean ieee80211v wnm_sleep_mode bss_transition
+	config_add_int time_advertisement
+	config_add_string time_zone
+
 	config_add_boolean ieee80211r pmk_r1_push ft_psk_generate_local ft_over_ds
 	config_add_int r0_key_lifetime reassociation_deadline
 	config_add_string mobility_domain r1_key_holder
@@ -392,6 +396,21 @@ hostapd_set_bss_options() {
 	set_default rrm_beacon_report 0
 	append bss_conf "rrm_neighbor_report=$rrm_neighbor_report" "$N"
 	append bss_conf "rrm_beacon_report=$rrm_beacon_report" "$N"
+
+	json_get_vars ieee80211v
+	set_default ieee80211v 0
+	if [ "$ieee80211v" -eq "1" ]; then
+		json_get_vars time_advertisement time_zone wnm_sleep_mode bss_transition
+
+		set_default time_advertisement 0
+		set_default wnm_sleep_mode 0
+		set_default bss_transition 0
+
+		append bss_conf "time_advertisement=$time_advertisement" "$N"
+		[ -n "$time_zone" ] && append bss_conf "time_zone=$time_zone" "$N"
+		append bss_conf "wnm_sleep_mode=$wnm_sleep_mode" "$N"
+		append bss_conf "bss_transition=$bss_transition" "$N"
+	fi
 
 	if [ "$wpa" -ge "1" ]; then
 		json_get_vars ieee80211r
